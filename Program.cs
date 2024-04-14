@@ -1,10 +1,10 @@
-﻿var logger = new Logger(new SimpleLogService());
+﻿var logger = new Logger(new SimpleLogService(), new SimpleLogServiceEmale());
 logger.LogMessage("Hello METANIT.COM");
 
-logger = new Logger(new GreenLogService());
+logger = new Logger(new GreenLogService(), new SimpleLogServiceEmale());
 logger.LogMessage("Hello METANIT.COM");
 
-logger = new Logger(new SimpleLogServiceEmale());
+logger = new Logger(new SimpleLogService(), new SimpleLogServiceEmale());
 logger.LogEmail("ABCD@mail.ru");
 
 interface ILogService
@@ -30,20 +30,24 @@ class GreenLogService : ILogService
 
 interface IEmailService
 {
-    void Write(string emale);
+    void Write(string email);
 }
 
 class SimpleLogServiceEmale : IEmailService
 {
-    public void Write(string emale) => Console.WriteLine(emale);
+    public void Write(string email) => Console.WriteLine(email);
 }
 
 class Logger
 {
     ILogService logService;
-    IEmailService logServiceEmale;
-    public Logger(ILogService logService) => this.logService = logService;
-    public Logger(IEmailService logServiceEmale) => this.logServiceEmale = logServiceEmale;
+    IEmailService logServiceEmail;
+    public Logger(ILogService logService, IEmailService logServiceEmail)
+    {
+        this.logService = logService;
+        this.logServiceEmail = logServiceEmail;
+    }
     public void LogMessage(string message) => logService?.Write($"{DateTime.Now}  {message}");
-    public void LogEmail(string emale) => logServiceEmale?.Write($"{DateTime.Now}  {emale}");
+    public void LogEmail(string emale) => logServiceEmail?.Write($"{DateTime.Now}  {emale}");
 }
+
