@@ -19,7 +19,15 @@ LogMessage(string msg){
 В interface IEmailService, SendEmail вместо Write
 В class SimpleLogServiceEmale : IEmailService, SendEmail вместо Write
 
-Для определения что именной вывести предложил ввести 
+Для определения что именной выводить предложил ввести LogType
+
+public enum LogType
+{
+    Console,
+    Email
+}
+
+И соответственно  поменял сам Logger
 
 
 
