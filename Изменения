@@ -1,0 +1,76 @@
+Менял класс Logger 
+
+Хотел из 
+    public void LogMessage(string message) => logService?.Write($"{DateTime.Now}  {message}");
+    public void LogEmail(string emale) => logServiceEmail?.Write($"{DateTime.Now}  {emale}");
+
+Преобразовать в
+
+LogMessage(string msg){
+ logService?.Write($"{DateTime.Now}  {message}");
+ logServiceEmail?.SendEmail($"{DateTime.Now}  {message}");
+}
+
+То есть хотел вместо отдельных LogMessage и LogEmail сделать один метод из которого уже в зависимости от подаваемых данных выбирать - выводить сообщение
+или мэйл
+
+С помощью ГПТ внес следующие изменения:
+
+В interface IEmailService, SendEmail вместо Write
+В class SimpleLogServiceEmale : IEmailService, SendEmail вместо Write
+
+Для определения что именной выводить предложил ввести LogType
+
+public enum LogType
+{
+    Console,
+    Email
+}
+
+И соответственно  поменял сам Logger
+
+
+
+БЫЛО
+===============================================================================================
+class Logger
+{
+    ILogService logService;
+    IEmailService logServiceEmail;
+    public Logger(ILogService logService, IEmailService logServiceEmail)
+    {
+        this.logService = logService;
+        this.logServiceEmail = logServiceEmail;
+    }
+    public void LogMessage(string message) => logService?.Write($"{DateTime.Now}  {message}");
+    public void LogEmail(string emale) => logServiceEmail?.Write($"{DateTime.Now}  {emale}");
+}
+===============================================================================================
+
+СТАЛО
+===============================================================================================
+class Logger
+{
+    ILogService logService;
+    IEmailService emailService;
+
+    public Logger(ILogService logService, IEmailService emailService)
+    {
+        this.logService = logService;
+        this.emailService = emailService;
+    }
+
+    public void LogMessage(string message, LogType logType)
+    {
+        switch (logType)
+        {
+            case LogType.Console:
+                logService?.Write($"{DateTime.Now}  {message}");
+                break;
+            case LogType.Email:
+                emailService?.SendEmail($"{DateTime.Now}  {message}");
+                break;
+        }
+    }
+}
+===============================================================================================
